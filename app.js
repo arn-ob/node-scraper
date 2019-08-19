@@ -4,25 +4,27 @@
  */
 
 
-const scrap = require('./scrap_func');
+const scraper_startec = require('./process/scraper_startec');
 const schedule = require('node-schedule');
+const email_sender = require('./lib/email')
 
 var rule = new schedule.RecurrenceRule();
 
-rule.second = 1;
+rule.hour = 1;
 
 let job_runs = 0
 
 console.log("Scraper Job Started")
 
+
 schedule.scheduleJob(rule, function(){
     
     console.log('Job Starting');
     
-    scrap.scrap('https://www.startech.com.bd/component/processor/amd-processor', ( return_data => { 
-        
+    scraper_startec.scrap('https://www.startech.com.bd/component/processor/amd-processor',  ( async return_data => { 
         console.log(return_data) 
-    
+        const message = JSON.stringify(return_data)
+        await email_sender.send('arnobxtreme@gmail.com', 'startech Processor Update', '', message)
     }))
 
 
