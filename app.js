@@ -1,58 +1,31 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+/**
+ * Job Scheduler
+ * Scraper work every 1 hour
+ */
 
-const url = 'https://www.startech.com.bd/component/processor/amd-processor';
 
-axios(url)
-    .then(response => {
-        const html = response.data;
-        const $ = cheerio.load(html);
-        const full_scrap_body = $('body');
+const scrap = require('./scrap_func');
+const schedule = require('node-schedule');
 
-        let cpu_list_array = [];
-        let processor_name = [];
-        let processor_price = [];
-        let processor_status = [];
+var rule = new schedule.RecurrenceRule();
 
-        full_scrap_body.each(function () {
-            
-            $(this).find('.product-name > a').map((item, e) => {
-                // console.log(e.children[0].data)
-                if(e.children[0].type === 'text'){
-                    processor_name.push({name: e.children[0].data})
-                }
-               
-            });
+rule.second = 1;
 
-            $(this).find('.price.space-between > span').map((item, e) => {
-                if(e.children[0].data !== undefined){
-                    processor_price.push({name: e.children[0].data})
-                }
-            });
-            
-            $(this).find('.cart-btn > span').map((item, e) => {
-               if(e.children[0].type=== 'tag'){
-                    processor_status.push({name: 'Buy Now'})
-                } else {
-                    processor_status.push({name: e.children[0].data})
-                }
-               
-            });
-            // console.log({
-            //     processor_name,
-            //     processor_price,
-            //     processor_status
-            // })
-        });
+let job_runs = 0
 
-        processor_name.forEach( (item, index) => {
-            cpu_list_array.push({
-                name: item.name,
-                price: processor_price.find((_,i) => i === index).name,
-                status: processor_status.find((_,i) => i === index).name,
-            })
-        })
-  
-          console.log(cpu_list_array);
+console.log("Scraper Job Started")
 
-    }).catch(console.error);
+schedule.scheduleJob(rule, function(){
+    
+    console.log('Job Starting');
+    
+    scrap.scrap('https://www.startech.com.bd/component/processor/amd-processor', ( return_data => { 
+        
+        console.log(return_data) 
+    
+    }))
+
+
+    job_runs++;
+    console.log("Job Runs", job_runs)
+})
