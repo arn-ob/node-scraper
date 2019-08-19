@@ -7,14 +7,16 @@
 const scraper_startec = require('./process/scraper_startec');
 const schedule = require('node-schedule');
 const email_sender = require('./lib/email')
+const run_time_value = 1;
+
 
 var rule = new schedule.RecurrenceRule();
 
-rule.hour = 1;
+rule.hour = run_time_value;
 
 let job_runs = 0
 
-console.log("Scraper Job Started")
+console.log("Scraper Job Started. It will run every" + run_time_value)
 
 
 schedule.scheduleJob(rule, function(){
