@@ -16,7 +16,7 @@ rule.hour = run_time_value;
 
 let job_runs = 0
 
-console.log("Scraper Job Started. It will run every" + run_time_value)
+console.log("Scraper Job Started. It will run every: " + run_time_value + "Hour")
 
 
 schedule.scheduleJob(rule, function(){
